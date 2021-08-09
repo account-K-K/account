@@ -25,4 +25,8 @@ public class AccountService {
     public List<Integer> getUserIdList() {
         return userRepository.getUserIdOrderByRecentLogin();
     }
+
+    public int updateUser(String name) {
+        return userRepository.updateUser(name);
+    }
 }

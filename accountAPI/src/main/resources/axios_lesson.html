@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+</head>
+
+<body>
+    <div class="frame">
+        <h1 class="frame__title">Axiosの接続レッスン</h1>
+
+        <div  id="app" class="frame__inner">
+            <!-- test1 - click -->
+            <div>
+                <button v-on:click="sampleMethod">/userIdを起動</button>
+                <!-- infoのJson配列を一個一個表示する -->
+                <p v-for="(i, index) in info">
+                    result({{ index }}): {{ i }}<br />
+                    この人の名前は{{ i.name }}
+                </p>
+            </div>
+            <!-- test2 - click = update -->
+            <div>
+                <button v-on:click="updateMethod">update</button>
+                <!-- infoのJson配列を一個一個表示する -->
+                <input type="text" v-model="name" />
+            </div>
+              
+            <!-- ここに、JavaScriptを記述します -->
+            <script>
+                var app = new Vue({
+                    el: "#app",
+                    data: {
+                        info: '初期値',
+                        name: 'ttttttttt'
+                    },
+                    mounted() {
+                        axios
+                        .get('http://localhost:8080/all') // IP 127.0.0.1 === Domain localhost
+                        .then((response) => {
+                            // axiosの結果を待ったから処理したい部分
+                            this.info = response.data
+                            console.log(`success1　${this.info}`)
+                        })
+                        // axiosの結果を待たずに処理が走る
+                        console.log('success2　' + this.info)
+                    },
+                    methods: {
+                        sampleMethod: function() {
+                            axios
+                                .get('http://localhost:8080/userId')
+                                .then(response => (this.info = response.data))
+                                .catch(function(error) {
+                                    this.info = error
+                                    console.log('ERROR!! occurred in Backend.')
+                                });
+                        },
+                        updateMethod: function() {
+                            var params = new URLSearchParams();
+                            params.append('name', this.name);
+                            axios
+                                .post('http://localhost:8080/updateUser', params)
+                                .then(response => (this.info = response.data))
+                                .catch(function(error) {
+                                    this.info = error
+                                    console.log('ERROR!! occurred in Backend.')
+                                });
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>
